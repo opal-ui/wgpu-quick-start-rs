@@ -200,8 +200,15 @@ impl<'a> MySurface<'a> {
         Ok((output, view))
     }
 
-    pub fn on_device<R>(&self, fn_on_device: fn(&wgpu::Device) -> R) -> R {
+    pub fn on_device<R>(&self, mut fn_on_device: impl FnMut(&wgpu::Device) -> R) -> R {
         (fn_on_device)(&self.device)
+    }
+
+    pub fn on_device_and_texture<R>(
+        &self,
+        mut fn_device_and_texture: impl FnMut(&wgpu::Device, wgpu::TextureFormat) -> R,
+    ) -> R {
+        (fn_device_and_texture)(&self.device, self.config.format)
     }
 
     /// submit the operations on the encoder to the queue created internally.
