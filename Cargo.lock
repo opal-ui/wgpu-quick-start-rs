@@ -1990,7 +1990,7 @@ dependencies = [
 
 [[package]]
 name = "wgpu_quick_start"
-version = "0.28.4"
+version = "0.28.5"
 dependencies = [
  "console_error_panic_hook",
  "console_log",
@@ -2499,18 +2499,12 @@ dependencies = [
 
 [[package]]
 name = "winit_app"
-version = "0.31.0"
+version = "0.31.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7ec876a41f611cd6ab2395ac3a1d4f53cc927a488d2c88134d6c007d59b92683"
+checksum = "7d8dede8ceff1eabf5d04e859181677f69ff7b4af406bb814f9e4d8c911010a8"
 dependencies = [
- "console_error_panic_hook",
- "console_log",
  "log",
  "thiserror 2.0.17",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "web-sys",
- "wgpu",
  "winit",
 ]
 

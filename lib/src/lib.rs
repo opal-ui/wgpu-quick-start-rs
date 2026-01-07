@@ -93,6 +93,7 @@
 pub mod gpu_instance;
 pub mod my_shader;
 pub mod my_surface;
+pub mod render_pass_factory;
 
 #[cfg(feature = "sync")]
 pub mod sync_surface;
