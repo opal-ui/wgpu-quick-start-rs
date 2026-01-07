@@ -1,0 +1,9 @@
+(function() {
+    var implementors = Object.fromEntries([["wgpu_quick_start",[["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.92.0/core/marker/trait.Unpin.html\" title=\"trait core::marker::Unpin\">Unpin</a> for <a class=\"enum\" href=\"wgpu_quick_start/enum.GPUStarterError.html\" title=\"enum wgpu_quick_start::GPUStarterError\">GPUStarterError</a>",1,["wgpu_quick_start::GPUStarterError"]],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.92.0/core/marker/trait.Unpin.html\" title=\"trait core::marker::Unpin\">Unpin</a> for <a class=\"struct\" href=\"wgpu_quick_start/gpu_instance/struct.GPUInstance.html\" title=\"struct wgpu_quick_start::gpu_instance::GPUInstance\">GPUInstance</a>",1,["wgpu_quick_start::gpu_instance::GPUInstance"]],["impl <a class=\"trait\" href=\"https://doc.rust-lang.org/1.92.0/core/marker/trait.Unpin.html\" title=\"trait core::marker::Unpin\">Unpin</a> for <a class=\"struct\" href=\"wgpu_quick_start/my_shader/struct.MyShader.html\" title=\"struct wgpu_quick_start::my_shader::MyShader\">MyShader</a>",1,["wgpu_quick_start::my_shader::MyShader"]],["impl&lt;'a&gt; <a class=\"trait\" href=\"https://doc.rust-lang.org/1.92.0/core/marker/trait.Unpin.html\" title=\"trait core::marker::Unpin\">Unpin</a> for <a class=\"struct\" href=\"wgpu_quick_start/my_surface/struct.MySurface.html\" title=\"struct wgpu_quick_start::my_surface::MySurface\">MySurface</a>&lt;'a&gt;",1,["wgpu_quick_start::my_surface::MySurface"]]]]]);
+    if (window.register_implementors) {
+        window.register_implementors(implementors);
+    } else {
+        window.pending_implementors = implementors;
+    }
+})()
+//{"start":57,"fragment_lengths":[1412]}
