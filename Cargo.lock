@@ -1990,11 +1990,16 @@ dependencies = [
 
 [[package]]
 name = "wgpu_quick_start"
-version = "0.28.3"
+version = "0.28.4"
 dependencies = [
+ "console_error_panic_hook",
+ "console_log",
  "log",
  "pollster",
  "thiserror 2.0.17",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "web-sys",
  "wgpu",
  "winit",
  "winit_app",
