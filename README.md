@@ -4,13 +4,13 @@
 
 ```toml
 [dependencies]
-wgpu_quick_start = "0.28.4"
+wgpu_quick_start = "0.28.5"
 ```
 
 To access the synchronous version of creating `MySurface::new`, use the `sync` feature as below
 ```toml
 [dependencies]
-wgpu_quick_start = { version="0.28.4", features = ["sync"] }
+wgpu_quick_start = { version="0.28.5", features = ["sync"] }
 ```
 
 This Rust library `wgpu_quick_start` represents the code to get started with `wgpu` library.
@@ -91,11 +91,7 @@ fn launch() -> Result<(), Box<dyn std::error::Error>> {
                                            },
                                        );
                                    }
-<<<<<<< HEAD
-                                   local_surface.submit_queue(encoder);
-=======
                                    local_surface.submit_to_queue(std::iter::once(encoder.finish()));
->>>>>>> ac82d8f (fix: version)
                                    output.present();
                                }
                                Err(err) => {
