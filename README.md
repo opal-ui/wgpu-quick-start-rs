@@ -1,3 +1,4 @@
+[`wgpu_quick_start`](https://crates.io/crates/wgpu_quick_start) [![crates.io](https://img.shields.io/crates/v/wgpu_quick_start.svg)](https://crates.io/crates/wgpu_quick_start)
 
 # Wgpu library Starter Project
 
