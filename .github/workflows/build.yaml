@@ -1,5 +1,5 @@
 name: CI Pipeline
-run-name: ${{ github.actor }} is learning GitHub Actions
+run-name: ${{ github.actor }} is using Github Actions to check code
 
 on: [push]
 
@@ -9,7 +9,22 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
-        
+        uses: actions/checkout@v6
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable # A popular action for setting up the Rust environment
+
+      - name: Run cargo build
+        working-directory: ./lib
+        run: cargo build --all-features --verbose
+
+      - name: Run cargo test
+        working-directory: ./lib
+        run: cargo test --all-features --verbose        
+
+      - name: Run cargo doc
+        working-directory: ./lib
+        run: cargo d --no-deps --all-features
+
       - name: Run a script
         run: echo "Add your build and test commands here"
