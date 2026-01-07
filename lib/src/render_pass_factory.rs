@@ -1,6 +1,6 @@
 //! Module used to create `wgpu::RenderPass` to be used for rendering.
-//! 
-//! 
+//!
+//!
 
 /// Create a new render pass for the given encoder
 /// with a given label and clear with a particular color

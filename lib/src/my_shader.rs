@@ -1,6 +1,6 @@
 //! Module to create shaders and render pipelines to be used for rendering shapes and objects
-//! 
-//! 
+//!
+//!
 
 use std::borrow::Cow;
 
