@@ -16,11 +16,11 @@ jobs:
 
       - name: Run cargo build
         working-directory: ./lib
-        run: cargo build --all-features --verbose
+        run: cargo build --all-features
 
       - name: Run cargo test
         working-directory: ./lib
-        run: cargo test --all-features --verbose        
+        run: cargo test --all-features
 
       - name: Run cargo doc
         working-directory: ./lib
