@@ -4,7 +4,9 @@ use super::GPUStarterResult;
 use super::gpu_instance::GPUInstance;
 
 /// An abstraction of the wgpu::Surface<'lifetime>
-/// that gets created.
+/// to create from a given `winit` Window.
+///
+/// Following is an example to create the surface using a given `Window`
 ///
 /// ```rust
 /// use wgpu_quick_start::{my_surface::MySurface, sync_surface::create_new_surface};
@@ -29,63 +31,7 @@ use super::gpu_instance::GPUInstance;
 ///            },
 ///            AppWindowEvent::OnWindowEvent(event, event_loop) => {
 ///                if let Some(local_surface) = opt_surface.as_mut() {
-///                    match event {
-///                        WindowEvent::CloseRequested => {
-///                            event_loop.exit();
-///                        }
-///                        WindowEvent::SurfaceResized(size) => {
-///                            // Resized
-///                            local_surface.resize((size.width, size.height));
-///                        }
-///                        WindowEvent::RedrawRequested => {
-///                            match local_surface.get_texture() {
-///                                Ok((output, view)) => {
-///                                     let mut encoder = local_surface.on_device(|device| {
-///                                        device.create_command_encoder(
-///                                            &wgpu::CommandEncoderDescriptor {
-///                                                label: Some("Render Encoder"),
-///                                            },
-///                                        )
-///                                    });
-///                                    {
-///                                        let _render_pass = encoder.begin_render_pass(
-///                                            &wgpu::RenderPassDescriptor {
-///                                                label: Some("render-pass"),
-///                                                color_attachments: &[Some(
-///                                                    wgpu::RenderPassColorAttachment {
-///                                                        view: &view,
-///                                                        resolve_target: None,
-///                                                        ops: wgpu::Operations {
-///                                                            load: wgpu::LoadOp::Clear(
-///                                                                wgpu::Color {
-///                                                                    r: 0.2,
-///                                                                    g: 0.2,
-///                                                                    b: 0.2,
-///                                                                    a: 1.0,
-///                                                                },
-///                                                            ),
-///                                                            store: wgpu::StoreOp::Store,
-///                                                        },
-///                                                        depth_slice: None,
-///                                                    },
-///                                                )],
-///                                                depth_stencil_attachment: None,
-///                                                occlusion_query_set: None,
-///                                                timestamp_writes: None,
-///                                                multiview_mask: None,
-///                                            },
-///                                        );
-///                                    }
-///                                    local_surface.submit_to_queue(std::iter::once(encoder.finish()));
-///                                    output.present();
-///                                }
-///                                Err(err) => {
-///                                    // warning - error creating the texture
-///                                }
-///                            }
-///                        }
-///                        _ => {}
-///                    }
+///                     // Handle those events
 ///                }
 ///            }
 ///        },

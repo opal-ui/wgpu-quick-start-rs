@@ -2,6 +2,21 @@ use wgpu::{Surface, SurfaceTarget};
 
 use crate::GPUStarterResult;
 
+/// Abstraction of `wgpu::Instance`
+///
+///
+///
+/// ## Usage
+///
+/// To create a new instance of the same, use the following example.
+///
+/// ```rust
+/// use wgpu_quick_start::gpu_instance::GPUInstance;
+/// fn create_new_gpu_instance() {
+///    let instance = GPUInstance::new();
+/// }
+/// ```
+///
 pub struct GPUInstance {
     pub instance: wgpu::Instance,
 }
@@ -13,6 +28,7 @@ impl Default for GPUInstance {
 }
 
 impl GPUInstance {
+    /// Create a new instance based on the platform
     pub fn new() -> Self {
         // The instance is a handle to our GPU
         // BackendBit::PRIMARY => Vulkan + Metal + DX12 + Browser WebGPU

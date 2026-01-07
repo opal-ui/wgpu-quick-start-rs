@@ -3,20 +3,27 @@ use std::borrow::Cow;
 use wgpu::VertexBufferLayout;
 
 pub struct MyShader {
+    /// Entry-point of the function in the shader wgsl file. Default is `vs_main`
     vertex_entry_point: String,
 
+    /// Name of the function in the shader wgsl file. Default is `fs_main`
     fragment_entry_point: String,
 
+    /// Label assigned to the pipeline layout
     label_pipeline_layout: String,
 
+    /// Label assigned to the render pipeline
     label_render_pipeline: String,
 
+    /// Topology of the points/vertices. Default is `wgpu::PrimitiveTopology::TriangleList`
     topology: wgpu::PrimitiveTopology,
 
+    /// Name of the shader module
     shader: wgpu::ShaderModule,
 }
 
 impl MyShader {
+    /// Create a new shader from the given `device`, giving it a given `label`, sourcing it from `source`
     pub fn new<'b>(device: &wgpu::Device, label: String, source: Cow<'b, str>) -> Self {
         let descriptor = wgpu::ShaderModuleDescriptor {
             label: Some(label.as_str()),
