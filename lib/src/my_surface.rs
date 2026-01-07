@@ -1,4 +1,4 @@
-use wgpu::SurfaceTarget;
+use wgpu::{CommandBuffer, SubmissionIndex, SurfaceTarget};
 
 use super::GPUStarterResult;
 use super::gpu_instance::GPUInstance;
@@ -76,7 +76,7 @@ use super::gpu_instance::GPUInstance;
 ///                                            },
 ///                                        );
 ///                                    }
-///                                    local_surface.submit_queue(encoder);
+///                                    local_surface.submit_to_queue(std::iter::once(encoder.finish()));
 ///                                    output.present();
 ///                                }
 ///                                Err(err) => {
@@ -200,10 +200,25 @@ impl<'a> MySurface<'a> {
         Ok((output, view))
     }
 
-    pub fn on_device<R>(&self, mut fn_on_device: impl FnMut(&wgpu::Device) -> R) -> R {
+    /// Execute a function on the `device` reference stored internally
+    pub fn on_device_mut<R>(&self, mut fn_on_device: impl FnMut(&wgpu::Device) -> R) -> R {
         (fn_on_device)(&self.device)
     }
 
+    /// Execute a function on the `device` reference stored internally
+    pub fn on_device<R>(&self, fn_on_device: impl Fn(&wgpu::Device) -> R) -> R {
+        (fn_on_device)(&self.device)
+    }
+
+    /// Execute a function on 'device' and texture stored internally
+    pub fn on_device_and_texture_mut<R>(
+        &self,
+        fn_device_and_texture: impl Fn(&wgpu::Device, wgpu::TextureFormat) -> R,
+    ) -> R {
+        (fn_device_and_texture)(&self.device, self.config.format)
+    }
+
+    /// Execute a function on 'device' and texture stored internally    
     pub fn on_device_and_texture<R>(
         &self,
         mut fn_device_and_texture: impl FnMut(&wgpu::Device, wgpu::TextureFormat) -> R,
@@ -211,11 +226,34 @@ impl<'a> MySurface<'a> {
         (fn_device_and_texture)(&self.device, self.config.format)
     }
 
+    /// Execute a function on the `queue` reference stored internally
+    pub fn on_queue_mut<R>(&self, mut fn_on_queue: impl FnMut(&wgpu::Queue) -> R) -> R {
+        (fn_on_queue)(&self.queue)
+    }
+
+    /// Execute a function on the `queue` reference stored internally
+    pub fn on_queue<R>(&self, fn_on_queue: impl Fn(&wgpu::Queue) -> R) -> R {
+        (fn_on_queue)(&self.queue)
+    }
+
+    /// Execute a function on the `adapter` reference stored internally
+    pub fn on_adapter_mut<R>(&self, mut fn_on_adapter: impl FnMut(&wgpu::Adapter) -> R) -> R {
+        (fn_on_adapter)(&self.adapter)
+    }
+
+    /// Execute a function on the `adapter` reference stored internally
+    pub fn on_adapter<R>(&self, fn_on_adapter: impl Fn(&wgpu::Adapter) -> R) -> R {
+        (fn_on_adapter)(&self.adapter)
+    }
+
     /// submit the operations on the encoder to the queue created internally.
     ///
     /// Queue submission is quite expensive. Should not be used frequently.
     /// But, rather batched at the end !
-    pub fn submit_queue(&self, encoder: wgpu::CommandEncoder) {
-        self.queue.submit(std::iter::once(encoder.finish()));
+    pub fn submit_to_queue<I>(&self, command_buffer: I) -> SubmissionIndex
+    where
+        I: IntoIterator<Item = CommandBuffer>,
+    {
+        self.queue.submit(command_buffer)
     }
 }

@@ -61,7 +61,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                             multiview_mask: None,
                                         });
                                 }
-                                local_surface.submit_queue(encoder);
+                                local_surface.submit_to_queue(std::iter::once(encoder.finish()));
                                 output.present();
                             }
                             Err(err) => {
