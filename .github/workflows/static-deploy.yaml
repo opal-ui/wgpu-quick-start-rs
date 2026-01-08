@@ -33,6 +33,10 @@ jobs:
         working-directory: ./lib
         run: cargo publish --dry-run --all-features
 
+      - name: Run cargo package --list
+        working-directory: ./lib
+        run: cargo package --list
+
       - name: Run copy index.html
         run: cp ./docs/index.html ./target/doc
 

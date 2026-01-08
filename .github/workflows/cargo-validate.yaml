@@ -36,3 +36,7 @@ jobs:
       - name: Run cargo publish dry run
         working-directory: ./lib
         run: cargo publish --dry-run --all-features
+
+      - name: Run cargo package --list
+        working-directory: ./lib
+        run: cargo package --list
