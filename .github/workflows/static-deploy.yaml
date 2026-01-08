@@ -4,7 +4,7 @@ run-name: ${{ github.actor }} is using Github Actions to check code and deploy s
 on:
   push:
     branches:
-      - main
+      - www
 
 jobs:
   build:
