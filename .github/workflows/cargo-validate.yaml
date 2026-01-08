@@ -40,3 +40,6 @@ jobs:
       - name: Run cargo package --list
         working-directory: ./lib
         run: cargo package --list
+
+      - name: Run a script
+        run: echo "Validated successfully at `date`"

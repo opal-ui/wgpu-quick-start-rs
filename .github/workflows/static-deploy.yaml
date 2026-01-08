@@ -47,7 +47,7 @@ jobs:
           path: ./target/doc
 
       - name: Run a script
-        run: echo "Last script to complete"
+        run: echo "Deployed successfully at `date`"
 
   # Deploy job
   deploy:
