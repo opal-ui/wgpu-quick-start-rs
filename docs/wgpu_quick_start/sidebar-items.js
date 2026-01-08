@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["GPUStarterError"],"mod":["gpu_instance","my_shader","my_surface","render_pass_factory","sync_surface"],"type":["GPUStarterResult"]};
