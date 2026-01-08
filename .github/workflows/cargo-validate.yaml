@@ -1,5 +1,5 @@
 name: CI Pipeline
-run-name: ${{ github.actor }} is using Github Actions to validate rust code and run tests / docs
+run-name: ${{ github.actor }} is using Github Actions to validate/test rust code.
 
 on:
   push:
