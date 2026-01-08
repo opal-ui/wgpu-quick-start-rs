@@ -1,7 +1,10 @@
-name: CI Pipeline
+name: Build and Deploy
 run-name: ${{ github.actor }} is using Github Actions to check code and deploy automatically
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
   build:
@@ -25,6 +28,10 @@ jobs:
       - name: Run cargo doc
         working-directory: ./lib
         run: cargo d --no-deps --all-features
+
+      - name: Run cargo prepare dry run
+        working-directory: ./lib
+        run: cargo prepare --dry-run --all-features
 
       - name: Run copy index.html
         run: cp ./docs/index.html ./target/doc
