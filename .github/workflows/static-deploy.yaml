@@ -1,5 +1,5 @@
 name: Build and Deploy
-run-name: ${{ github.actor }} is using Github Actions to check code and deploy automatically
+run-name: ${{ github.actor }} is using Github Actions to check code and deploy static html
 
 on:
   push:
@@ -29,9 +29,9 @@ jobs:
         working-directory: ./lib
         run: cargo d --no-deps --all-features
 
-      - name: Run cargo prepare dry run
+      - name: Run cargo publish dry run
         working-directory: ./lib
-        run: cargo prepare --dry-run --all-features
+        run: cargo publish --dry-run --all-features
 
       - name: Run copy index.html
         run: cp ./docs/index.html ./target/doc
