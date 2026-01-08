@@ -24,7 +24,6 @@ This Rust library `wgpu_quick_start` represents the code to get started with `wg
 ## Usage
 
 ```rust
-
 use wgpu_quick_start::{my_surface::MySurface, sync_surface::create_new_surface};
 use winit::{event::WindowEvent, window::WindowAttributes};
 use winit_app::{app_listener::AppWindowEvent, application::Application};
@@ -66,33 +65,19 @@ fn launch() -> Result<(), Box<dyn std::error::Error>> {
                                        )
                                    });
                                    {
-                                       let _render_pass = encoder.begin_render_pass(
-                                           &wgpu::RenderPassDescriptor {
-                                               label: Some("render-pass"),
-                                               color_attachments: &[Some(
-                                                   wgpu::RenderPassColorAttachment {
-                                                       view: &view,
-                                                       resolve_target: None,
-                                                       ops: wgpu::Operations {
-                                                           load: wgpu::LoadOp::Clear(
-                                                               wgpu::Color {
-                                                                   r: 0.2,
-                                                                   g: 0.2,
-                                                                   b: 0.2,
-                                                                   a: 1.0,
-                                                               },
-                                                           ),
-                                                           store: wgpu::StoreOp::Store,
-                                                       },
-                                                       depth_slice: None,
-                                                   },
-                                               )],
-                                               depth_stencil_attachment: None,
-                                               occlusion_query_set: None,
-                                               timestamp_writes: None,
-                                               multiview_mask: None,
+                                    let _render_pass =
+                                       wgpu_quick_start::render_pass_factory::create_render_pass(
+                                           &mut encoder,
+                                           "root-render-pass".to_owned(),
+                                           wgpu::Color {
+                                               r: 0.9,
+                                               g: 0.9,
+                                               b: 0.9,
+                                               a: 1.0,
                                            },
+                                           &view,
                                        );
+                                       // TODO: Render objects using render pass
                                    }
                                    local_surface.submit_to_queue(std::iter::once(encoder.finish()));
                                    output.present();

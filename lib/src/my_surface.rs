@@ -1,3 +1,7 @@
+//! A module to create `wgpu::Surface` and manage the same.
+//!
+//!
+
 use wgpu::{CommandBuffer, SubmissionIndex, SurfaceTarget};
 
 use super::GPUStarterResult;

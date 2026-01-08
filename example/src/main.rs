@@ -37,29 +37,17 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 });
                                 {
                                     let _render_pass =
-                                        encoder.begin_render_pass(&wgpu::RenderPassDescriptor {
-                                            label: Some("render-pass"),
-                                            color_attachments: &[Some(
-                                                wgpu::RenderPassColorAttachment {
-                                                    view: &view,
-                                                    resolve_target: None,
-                                                    ops: wgpu::Operations {
-                                                        load: wgpu::LoadOp::Clear(wgpu::Color {
-                                                            r: 0.9,
-                                                            g: 0.9,
-                                                            b: 0.9,
-                                                            a: 1.0,
-                                                        }),
-                                                        store: wgpu::StoreOp::Store,
-                                                    },
-                                                    depth_slice: None,
-                                                },
-                                            )],
-                                            depth_stencil_attachment: None,
-                                            occlusion_query_set: None,
-                                            timestamp_writes: None,
-                                            multiview_mask: None,
-                                        });
+                                        wgpu_quick_start::render_pass_factory::create_render_pass(
+                                            &mut encoder,
+                                            "root-render-pass".to_owned(),
+                                            wgpu::Color {
+                                                r: 0.9,
+                                                g: 0.9,
+                                                b: 0.9,
+                                                a: 1.0,
+                                            },
+                                            &view,
+                                        );
                                 }
                                 local_surface.submit_to_queue(std::iter::once(encoder.finish()));
                                 output.present();
