@@ -1,0 +1,36 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="This synchronous function helps create a new surface from the given window."><title>create_new_surface in wgpu_quick_start::sync_surface - Rust</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Italic-81dc35de.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-MediumItalic-ccf7e434.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2"href="../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../static.files/rustdoc-ca0dd0c4.css"><meta name="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="wgpu_quick_start" data-themes="" data-resource-suffix="" data-rustdoc-version="1.92.0 (ded5c06cf 2025-12-08)" data-channel="1.92.0" data-search-js="search-d69d8955.js" data-stringdex-js="stringdex-c3e638e9.js" data-settings-js="settings-c38705f0.js" ><script src="../../static.files/storage-e2aeef58.js"></script><script defer src="sidebar-items.js"></script><script defer src="../../static.files/main-ce535bd0.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-263c88ec.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-eab170b8.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-044be391.svg"></head><body class="rustdoc fn"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><rustdoc-topbar><h2><a href="#">create_new_surface</a></h2></rustdoc-topbar><nav class="sidebar"><div class="sidebar-crate"><h2><a href="../../wgpu_quick_start/index.html">wgpu_<wbr>quick_<wbr>start</a><span class="version">0.28.5</span></h2></div><div class="sidebar-elems"><section id="rustdoc-toc"><h2 class="location"><a href="#">create_<wbr>new_<wbr>surface</a></h2><h3><a href="#">Sections</a></h3><ul class="block top-toc"><li><a href="#usage" title="Usage">Usage</a></li></ul></section><div id="rustdoc-modnav"><h2><a href="index.html">In wgpu_<wbr>quick_<wbr>start::<wbr>sync_<wbr>surface</a></h2></div></div></nav><div class="sidebar-resizer" title="Drag to resize sidebar"></div><main><div class="width-limiter"><section id="main-content" class="content"><div class="main-heading"><div class="rustdoc-breadcrumbs"><a href="../index.html">wgpu_quick_start</a>::<wbr><a href="index.html">sync_surface</a></div><h1>Function <span class="fn">create_<wbr>new_<wbr>surface</span>&nbsp;<button id="copy-path" title="Copy item path to clipboard">Copy item path</button></h1><rustdoc-toolbar></rustdoc-toolbar><span class="sub-heading"><a class="src" href="../../src/wgpu_quick_start/sync_surface.rs.html#63-68">Source</a> </span></div><pre class="rust item-decl"><code>pub fn create_new_surface&lt;'a&gt;(
+    window: <a class="struct" href="https://doc.rust-lang.org/1.92.0/alloc/boxed/struct.Box.html" title="struct alloc::boxed::Box">Box</a>&lt;dyn Window&gt;,
+) -&gt; <a class="type" href="../type.GPUStarterResult.html" title="type wgpu_quick_start::GPUStarterResult">GPUStarterResult</a>&lt;<a class="struct" href="../my_surface/struct.MySurface.html" title="struct wgpu_quick_start::my_surface::MySurface">MySurface</a>&lt;'a&gt;&gt;</code></pre><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><p>This synchronous function helps create a new surface from the given window.</p>
+<p>Available with <code>sync</code> feature. (Hence, not available by default).</p>
+<p>Can be enabled as below in the crate when being used.</p>
+<div class="example-wrap"><pre class="language-toml"><code>wgpu_quick_start = { version=&quot;0.28.3&quot;, features = [&quot;sync&quot;] }</code></pre></div><h3 id="usage"><a class="doc-anchor" href="#usage">§</a>Usage</h3>
+<p>Following is an example of using <code>create_new_surface</code> from a “winit” <code>Window</code>.</p>
+
+<div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>wgpu_quick_start::{my_surface::MySurface, sync_surface::create_new_surface};
+<span class="kw">use </span>winit::{event::WindowEvent, window::WindowAttributes};
+<span class="kw">use </span>winit_app::{app_listener::AppWindowEvent, application::Application};
+
+
+<span class="kw">fn </span>launch() -&gt; <span class="prelude-ty">Result</span>&lt;(), Box&lt;<span class="kw">dyn </span>std::error::Error&gt;&gt; {
+   <span class="kw">let </span>winit_app = Application::new();
+   <span class="kw">let </span><span class="kw-2">mut </span>opt_surface: <span class="prelude-ty">Option</span>&lt;Box&lt;MySurface&lt;<span class="lifetime">'_</span>&gt;&gt;&gt; = <span class="prelude-val">None</span>;
+   winit_app.run(
+       WindowAttributes::default().with_title(<span class="string">"wgpu starter app"</span>),
+       <span class="kw">move </span>|app_window_event| <span class="kw">match </span>app_window_event {
+           AppWindowEvent::NewWindow(window) =&gt; <span class="kw">match </span>create_new_surface(window) {
+               <span class="prelude-val">Ok</span>(value) =&gt; {
+                   opt_surface = <span class="prelude-val">Some</span>(Box::new(value));
+               }
+               <span class="prelude-val">Err</span>(err) =&gt; {
+                   <span class="comment">// warning - Error creating new surface from the window
+               </span>}
+           },
+           AppWindowEvent::OnWindowEvent(event, event_loop) =&gt; {
+               <span class="kw">if let </span><span class="prelude-val">Some</span>(local_surface) = opt_surface.as_mut() {
+                    <span class="comment">// Handle those events
+               </span>}
+           }
+       },
+   )<span class="question-mark">?</span>;
+   <span class="prelude-val">Ok</span>(())
+}</code></pre></div></div></details></section></div></main></body></html>
