@@ -29,14 +29,13 @@ use winit_app::{app_listener::AppWindowEvent, application::Application};
 
 fn launch() -> Result<(), Box<dyn std::error::Error>> {
    let winit_app = Application::new();
-   let mut opt_surface: Option<Box<MySurface<'_>>> = None;
+   let mut opt_surface: Option<Box<dyn MySurface>> = None;
    winit_app.run(
        WindowAttributes::default().with_title("wgpu starter app"),
        move |app_window_event| match app_window_event {
            AppWindowEvent::NewWindow(window) => match create_new_surface(window) {
                Ok(value) => {
-                   let boxed = Box::new(value);
-                   opt_surface = Some(boxed);
+                   opt_surface = Some(Box::new(value));
                }
                Err(err) => {
                    // warning - Error creating new surface from the window
@@ -53,15 +52,14 @@ fn launch() -> Result<(), Box<dyn std::error::Error>> {
                            local_surface.resize((size.width, size.height));
                        }
                        WindowEvent::RedrawRequested => {
-                           match local_surface.get_texture() {
+                           match local_surface.get_default_texture() {
                                Ok((output, view)) => {
-                                    let mut encoder = local_surface.on_device(|device| {
-                                       device.create_command_encoder(
-                                           &wgpu::CommandEncoderDescriptor {
-                                               label: Some("Render Encoder"),
-                                           },
-                                       )
-                                   });
+                                   let device = local_surface.get_device();
+                                   let mut encoder = device.create_command_encoder(
+                                        &wgpu::CommandEncoderDescriptor {
+                                            label: Some("Render Encoder"),
+                                        },
+                                   );
                                    {
                                     let _render_pass =
                                        wgpu_quick_start::render_pass_factory::create_render_pass(
@@ -77,7 +75,8 @@ fn launch() -> Result<(), Box<dyn std::error::Error>> {
                                        );
                                        // TODO: Render objects using render pass
                                    }
-                                   local_surface.submit_to_queue(std::iter::once(encoder.finish()));
+                                   let queue = local_surface.get_queue();
+                                   queue.submit(std::iter::once(encoder.finish()));
                                    output.present();
                                }
                                Err(err) => {
