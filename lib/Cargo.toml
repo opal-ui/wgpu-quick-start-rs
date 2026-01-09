@@ -1,6 +1,6 @@
 [package]
 name = "wgpu_quick_start"
-version = "0.28.5"
+version = "0.28.6"
 edition = "2024"
 license = "MIT"
 keywords = ["wgpu", "rust-windowing", "graphics", "winit"]

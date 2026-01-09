@@ -1990,7 +1990,7 @@ dependencies = [
 
 [[package]]
 name = "wgpu_quick_start"
-version = "0.28.5"
+version = "0.28.6"
 dependencies = [
  "console_error_panic_hook",
  "console_log",
