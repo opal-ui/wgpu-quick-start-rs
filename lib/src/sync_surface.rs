@@ -22,7 +22,7 @@
 //!
 //! fn launch() -> Result<(), Box<dyn std::error::Error>> {
 //!    let winit_app = Application::new();
-//!    let mut opt_surface: Option<Box<MySurface<'_>>> = None;
+//!    let mut opt_surface: Option<Box<dyn MySurface>> = None;
 //!    winit_app.run(
 //!        WindowAttributes::default().with_title("wgpu starter app"),
 //!        move |app_window_event| match app_window_event {
@@ -44,8 +44,10 @@
 //!    Ok(())
 //! }
 //! ```
+#[cfg(feature = "sync")]
+use crate::my_surface::MySurfaceImpl;
+
 use super::GPUStarterResult;
-use super::my_surface::MySurface;
 use log::info;
 use winit::window::Window;
 
@@ -72,7 +74,7 @@ use winit::window::Window;
 ///
 /// fn launch() -> Result<(), Box<dyn std::error::Error>> {
 ///    let winit_app = Application::new();
-///    let mut opt_surface: Option<Box<MySurface<'_>>> = None;
+///    let mut opt_surface: Option<Box<dyn MySurface>> = None;
 ///    winit_app.run(
 ///        WindowAttributes::default().with_title("wgpu starter app"),
 ///        move |app_window_event| match app_window_event {
@@ -95,9 +97,11 @@ use winit::window::Window;
 /// }
 /// ```
 #[cfg(feature = "sync")]
-pub fn create_new_surface<'a>(window: Box<dyn Window>) -> GPUStarterResult<MySurface<'a>> {
+pub fn create_new_surface<'a>(window: Box<dyn Window>) -> GPUStarterResult<MySurfaceImpl<'a>> {
+    use crate::my_surface::MySurfaceImpl;
+
     let size = window.surface_size();
-    let surface = pollster::block_on(MySurface::new(window, (size.width, size.height)))?;
+    let surface = pollster::block_on(MySurfaceImpl::new(window, (size.width, size.height)))?;
     info!("Created a new surface context. Passing down");
     Ok(surface)
 }

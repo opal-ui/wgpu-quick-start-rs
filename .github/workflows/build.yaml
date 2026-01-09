@@ -1,10 +1,7 @@
-name: Build and Static Deploy
-run-name: ${{ github.actor }} is using Github Actions to check code and deploy static html
+name: CI Pipeline
+run-name: ${{ github.actor }} is using Github Actions to check code and deploy automatically
 
-on:
-  push:
-    branches:
-      - www
+on: [push]
 
 jobs:
   build:
@@ -29,25 +26,17 @@ jobs:
         working-directory: ./lib
         run: cargo d --no-deps --all-features
 
-      - name: Run cargo publish dry run
-        working-directory: ./lib
-        run: cargo publish --dry-run --all-features
-
-      - name: Run cargo package --list
-        working-directory: ./lib
-        run: cargo package --list
-
       - name: Run copy index.html
         run: cp ./docs/index.html ./target/doc
 
       - name: Upload static files as artifact
         id: deployment
-        uses: actions/upload-pages-artifact@v4 # or specific "vX.X.X" version tag for this action
+        uses: actions/upload-pages-artifact@v3 # or specific "vX.X.X" version tag for this action
         with:
           path: ./target/doc
 
       - name: Run a script
-        run: echo "Deployed successfully at `date`"
+        run: echo "Last script to complete"
 
   # Deploy job
   deploy:

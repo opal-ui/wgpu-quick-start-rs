@@ -4,8 +4,6 @@
 
 use std::borrow::Cow;
 
-use wgpu::VertexBufferLayout;
-
 pub struct MyShader {
     /// Entry-point of the function in the shader wgsl file. Default is `vs_main`
     vertex_entry_point: String,
@@ -73,7 +71,7 @@ impl MyShader {
         &self,
         device: &wgpu::Device,
         format: wgpu::TextureFormat,
-        buffers: &'a [VertexBufferLayout<'a>],
+        buffer_generator: impl Fn() -> wgpu::VertexBufferLayout<'a>,
     ) -> wgpu::RenderPipeline {
         let render_pipeline_layout =
             device.create_pipeline_layout(&wgpu::PipelineLayoutDescriptor {
@@ -82,13 +80,14 @@ impl MyShader {
                 immediate_size: 0,
             });
 
+        let buffers = buffer_generator();
         device.create_render_pipeline(&wgpu::RenderPipelineDescriptor {
             label: Some(&self.label_render_pipeline),
             layout: Some(&render_pipeline_layout),
             vertex: wgpu::VertexState {
                 module: &self.shader,
                 entry_point: Some(self.vertex_entry_point.as_str()),
-                buffers,
+                buffers: &[buffers],
                 compilation_options: wgpu::PipelineCompilationOptions::default(),
             },
             fragment: Some(wgpu::FragmentState {
