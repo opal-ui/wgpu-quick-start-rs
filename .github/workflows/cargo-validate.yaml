@@ -1,0 +1,45 @@
+name: CI Pipeline
+run-name: ${{ github.actor }} is using Github Actions to validate/test rust code.
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable # A popular action for setting up the Rust environment
+
+      - name: Run cargo build
+        working-directory: ./lib
+        run: cargo build --all-features
+
+      - name: Run cargo test
+        working-directory: ./lib
+        run: cargo test --all-features
+
+      - name: Run cargo doc
+        working-directory: ./lib
+        run: cargo d --no-deps --all-features
+
+      - name: Run cargo clippy
+        working-directory: ./lib
+        run: cargo clippy --all-features
+
+      - name: Run cargo publish dry run
+        working-directory: ./lib
+        run: cargo publish --dry-run --all-features
+
+      - name: Run cargo package --list
+        working-directory: ./lib
+        run: cargo package --list
+
+      - name: Run a script
+        run: echo "Validated successfully at `date`"

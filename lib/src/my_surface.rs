@@ -2,10 +2,11 @@
 //!
 //!
 
-use wgpu::{CommandBuffer, SubmissionIndex, SurfaceTarget};
+use wgpu::SurfaceTarget;
+
+use crate::GPUInstance;
 
 use super::GPUStarterResult;
-use super::gpu_instance::GPUInstance;
 
 /// An abstraction of the wgpu::Surface<'lifetime>
 /// to create from a given `winit` Window.
@@ -20,14 +21,13 @@ use super::gpu_instance::GPUInstance;
 ///
 /// fn launch() -> Result<(), Box<dyn std::error::Error>> {
 ///    let winit_app = Application::new();
-///    let mut opt_surface: Option<Box<MySurface<'_>>> = None;
+///    let mut opt_surface: Option<Box<dyn MySurface>> = None;
 ///    winit_app.run(
 ///        WindowAttributes::default().with_title("wgpu starter app"),
 ///        move |app_window_event| match app_window_event {
 ///            AppWindowEvent::NewWindow(window) => match create_new_surface(window) {
 ///                Ok(value) => {
-///                    let boxed = Box::new(value);
-///                    opt_surface = Some(boxed);
+///                    opt_surface = Some(Box::new(value));
 ///                }
 ///                Err(err) => {
 ///                    // warning - Error creating new surface from the window
@@ -43,9 +43,7 @@ use super::gpu_instance::GPUInstance;
 ///    Ok(())
 /// }
 /// ```
-pub struct MySurface<'a> {
-    config: wgpu::SurfaceConfiguration,
-
+pub struct MySurfaceImpl<'a> {
     surface: wgpu::Surface<'a>,
 
     device: wgpu::Device,
@@ -53,9 +51,29 @@ pub struct MySurface<'a> {
     queue: wgpu::Queue,
 
     adapter: wgpu::Adapter,
+
+    config: wgpu::SurfaceConfiguration,
 }
 
-impl<'a> MySurface<'a> {
+pub trait MySurface {
+    /// Retrieve the device associated with this surface
+    fn get_device(&self) -> &wgpu::Device;
+
+    /// Retrieve the underlying queue present
+    fn get_queue(&self) -> &wgpu::Queue;
+
+    fn get_config(&self) -> &wgpu::SurfaceConfiguration;
+
+    /// Reconfigure the underlying surface based on the new configuration
+    fn reconfigure(&self, new_config: &wgpu::SurfaceConfiguration);
+
+    fn resize(&mut self, size: (u32, u32));
+
+    /// Retrieve a new texture for the current surface
+    fn get_default_texture(&self) -> GPUStarterResult<(wgpu::SurfaceTexture, wgpu::TextureView)>;
+}
+
+impl<'a> MySurfaceImpl<'a> {
     /// Create a new surface from the given window
     /// for the given dimensions (width, height) tuple
     ///
@@ -90,6 +108,7 @@ impl<'a> MySurface<'a> {
                 trace: wgpu::Trace::Off,
             })
             .await?;
+
         let surface_capabilities = surface.get_capabilities(&adapter);
 
         // Shader code in this tutorial assumes an sRGB surface texture. Using a different
@@ -112,37 +131,35 @@ impl<'a> MySurface<'a> {
             view_formats: vec![],
             desired_maximum_frame_latency: 2,
         };
-        //
         Ok(Self {
             surface,
-            config,
             device,
             queue,
             adapter,
+            config,
         })
     }
+}
 
-    /// Resizes the given surface with the given dimensions
-    pub fn resize(&mut self, (width, height): (u32, u32)) {
-        if width > 0 && height > 0 {
-            self.config.width = width;
-            self.config.height = height;
-            self.surface.configure(&self.device, &self.config);
-        }
+impl<'a> MySurface for MySurfaceImpl<'a> {
+    fn get_device(&self) -> &wgpu::Device {
+        &self.device
     }
 
-    /// Retrieve the current size of the underlying configuration
-    pub fn get_size(&self) -> (u32, u32) {
-        (self.config.width, self.config.height)
+    fn get_queue(&self) -> &wgpu::Queue {
+        &self.queue
+    }
+
+    fn get_config(&self) -> &wgpu::SurfaceConfiguration {
+        &self.config
     }
 
     /// Reconfigure the surface based on updated configuration
-    pub fn reconfigure(&self, new_config: &wgpu::SurfaceConfiguration) {
+    fn reconfigure(&self, new_config: &wgpu::SurfaceConfiguration) {
         self.surface.configure(&self.device, new_config)
     }
 
-    /// Retrieve a new texture for the current surface
-    pub fn get_texture(&self) -> GPUStarterResult<(wgpu::SurfaceTexture, wgpu::TextureView)> {
+    fn get_default_texture(&self) -> GPUStarterResult<(wgpu::SurfaceTexture, wgpu::TextureView)> {
         let output = self.surface.get_current_texture()?;
         let view = output
             .texture
@@ -150,60 +167,12 @@ impl<'a> MySurface<'a> {
         Ok((output, view))
     }
 
-    /// Execute a function on the `device` reference stored internally
-    pub fn on_device_mut<R>(&self, mut fn_on_device: impl FnMut(&wgpu::Device) -> R) -> R {
-        (fn_on_device)(&self.device)
-    }
-
-    /// Execute a function on the `device` reference stored internally
-    pub fn on_device<R>(&self, fn_on_device: impl Fn(&wgpu::Device) -> R) -> R {
-        (fn_on_device)(&self.device)
-    }
-
-    /// Execute a function on 'device' and texture stored internally
-    pub fn on_device_and_texture_mut<R>(
-        &self,
-        fn_device_and_texture: impl Fn(&wgpu::Device, wgpu::TextureFormat) -> R,
-    ) -> R {
-        (fn_device_and_texture)(&self.device, self.config.format)
-    }
-
-    /// Execute a function on 'device' and texture stored internally    
-    pub fn on_device_and_texture<R>(
-        &self,
-        mut fn_device_and_texture: impl FnMut(&wgpu::Device, wgpu::TextureFormat) -> R,
-    ) -> R {
-        (fn_device_and_texture)(&self.device, self.config.format)
-    }
-
-    /// Execute a function on the `queue` reference stored internally
-    pub fn on_queue_mut<R>(&self, mut fn_on_queue: impl FnMut(&wgpu::Queue) -> R) -> R {
-        (fn_on_queue)(&self.queue)
-    }
-
-    /// Execute a function on the `queue` reference stored internally
-    pub fn on_queue<R>(&self, fn_on_queue: impl Fn(&wgpu::Queue) -> R) -> R {
-        (fn_on_queue)(&self.queue)
-    }
-
-    /// Execute a function on the `adapter` reference stored internally
-    pub fn on_adapter_mut<R>(&self, mut fn_on_adapter: impl FnMut(&wgpu::Adapter) -> R) -> R {
-        (fn_on_adapter)(&self.adapter)
-    }
-
-    /// Execute a function on the `adapter` reference stored internally
-    pub fn on_adapter<R>(&self, fn_on_adapter: impl Fn(&wgpu::Adapter) -> R) -> R {
-        (fn_on_adapter)(&self.adapter)
-    }
-
-    /// submit the operations on the encoder to the queue created internally.
-    ///
-    /// Queue submission is quite expensive. Should not be used frequently.
-    /// But, rather batched at the end !
-    pub fn submit_to_queue<I>(&self, command_buffer: I) -> SubmissionIndex
-    where
-        I: IntoIterator<Item = CommandBuffer>,
-    {
-        self.queue.submit(command_buffer)
+    fn resize(&mut self, dimensions: (u32, u32)) {
+        let (width, height) = dimensions;
+        if width > 0 && height > 0 {
+            self.config.width = width;
+            self.config.height = height;
+            self.surface.configure(&self.device, &self.config);
+        }
     }
 }
