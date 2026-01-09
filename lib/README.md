@@ -4,13 +4,13 @@
 
 ```toml
 [dependencies]
-wgpu_quick_start = "0.28.5"
+wgpu_quick_start = "0.28.6"
 ```
 
 To access the synchronous version of creating `MySurface::new`, use the `sync` feature as below
 ```toml
 [dependencies]
-wgpu_quick_start = { version="0.28.5", features = ["sync"] }
+wgpu_quick_start = { version="0.28.6", features = ["sync"] }
 ```
 
 This exposes a new `fn create_new_surface()` to create a `MySurface` synchronously (using the crate `pollster` behind the scenes).
