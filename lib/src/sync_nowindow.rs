@@ -48,6 +48,7 @@ mod tests {
     use super::*;
 
     #[test]
+    #[ignore = "bug with adapter Vulkan/GL support etc"]
     #[cfg(feature = "enable-sync")]
     fn test_create_new_windowless_device() -> super::super::GPUStarterResult<()> {
         let my_device = create_new_windowless_device()?;

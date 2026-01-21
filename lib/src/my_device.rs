@@ -235,6 +235,7 @@ impl<'a> MyDevice for MyDeviceImpl<'a> {
 mod tests {
 
     #[test]
+    #[ignore = "bug with adapter Vulkan/GL support etc"]
     #[cfg(feature = "enable-sync")]
     fn test_windowless_device() -> super::super::GPUStarterResult<()> {
         use super::*;
