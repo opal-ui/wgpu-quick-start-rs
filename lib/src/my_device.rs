@@ -146,7 +146,13 @@ impl<'a> MyDeviceImpl<'a> {
     /// Useful for unit testing
     #[cfg(feature = "enable-sync")]
     pub async fn new_without_window() -> crate::GPUStarterResult<Self> {
-        let instance = crate::GPUInstance::new().instance;
+        let instance = wgpu::Instance::new(&wgpu::InstanceDescriptor {
+                    #[cfg(not(target_arch = "wasm32"))]
+                    backends: wgpu::Backends::VULKAN,
+                    #[cfg(target_arch = "wasm32")]
+                    backends: wgpu::Backends::GL,
+                    ..Default::default()
+                });        
         let adapter = instance
             .request_adapter(&wgpu::RequestAdapterOptions {
                 power_preference: wgpu::PowerPreference::default(),
