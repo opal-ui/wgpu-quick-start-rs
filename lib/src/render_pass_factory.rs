@@ -3,8 +3,8 @@
 //!
 
 /// Create a new render pass for the given encoder
-/// with a given label and clear with a particular color
-pub fn create_render_pass<'b>(
+/// with a given label and clear with a particular color to clear
+pub fn create_default_render_pass<'b>(
     encoder: &'b mut wgpu::CommandEncoder,
     label: String,
     color: wgpu::Color,

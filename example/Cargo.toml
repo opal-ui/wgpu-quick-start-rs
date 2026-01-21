@@ -9,8 +9,8 @@ repository = "https://github.com/opal-ui/wgpu-starter-rs"
 publish = false
 
 [dependencies]
-wgpu_quick_start = { path="../lib", features = ["sync"] }
-winit_app = {version="0.31.0"}
+wgpu_quick_start = { path="../lib", features = ["enable-sync-winit"] }
+winit_app = {version="0.31"}
 wgpu = { version = "28", default-features = false, features = ["wgsl", "vulkan", "dx12", "metal", "gles"] }
 winit = { version = "0.31.0-beta.2", features = ["android-native-activity"] }
 log = "0.4"
