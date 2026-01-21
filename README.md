@@ -22,14 +22,16 @@ This Rust library `wgpu_quick_start` represents the code to get started with `wg
 ## Usage
 
 ```rust
-use wgpu_quick_start::{MyResizableDevice, create_new_device};
+use wgpu_quick_start::{MyDevice};
+
+use wgpu_quick_start::create_new_device;
 use winit::{event::WindowEvent, window::WindowAttributes};
 use winit_app::{AppWindowEvent, Application};
 
 
 fn launch() -> Result<(), Box<dyn std::error::Error>> {
    let winit_app = Application::new();
-   let mut opt_device: Option<Box<dyn MyResizableDevice>> = None;
+   let mut opt_device: Option<Box<dyn MyDevice>> = None;
    winit_app.run(
        WindowAttributes::default().with_title("wgpu starter app"),
        move |app_window_event| match app_window_event {
