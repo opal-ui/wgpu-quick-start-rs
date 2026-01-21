@@ -4,13 +4,13 @@
 
 ```toml
 [dependencies]
-wgpu_quick_start = "0.28.6"
+wgpu_quick_start = "0.28"
 ```
 
-To access the synchronous version of creating `MySurface::new`, use the `sync` feature as below
+To access the synchronous version of creating `MySurface::new`, use the `sync_window` feature as below
 ```toml
 [dependencies]
-wgpu_quick_start = { version="0.28.6", features = ["sync"] }
+wgpu_quick_start = { version="0.28", features = ["enable-sync-winit"] }
 ```
 
 This Rust library `wgpu_quick_start` represents the code to get started with `wgpu` library.
@@ -22,39 +22,41 @@ This Rust library `wgpu_quick_start` represents the code to get started with `wg
 ## Usage
 
 ```rust
-use wgpu_quick_start::{my_surface::MySurface, sync_surface::create_new_surface};
+use wgpu_quick_start::{MyResizableDevice, create_new_device};
 use winit::{event::WindowEvent, window::WindowAttributes};
-use winit_app::{app_listener::AppWindowEvent, application::Application};
+use winit_app::{AppWindowEvent, Application};
 
 
 fn launch() -> Result<(), Box<dyn std::error::Error>> {
    let winit_app = Application::new();
-   let mut opt_surface: Option<Box<dyn MySurface>> = None;
+   let mut opt_device: Option<Box<dyn MyResizableDevice>> = None;
    winit_app.run(
        WindowAttributes::default().with_title("wgpu starter app"),
        move |app_window_event| match app_window_event {
-           AppWindowEvent::NewWindow(window) => match create_new_surface(window) {
+           AppWindowEvent::NewWindow(window) => match create_new_device(window) {
                Ok(value) => {
-                   opt_surface = Some(Box::new(value));
+                   opt_device = Some(value);
                }
                Err(err) => {
                    // warning - Error creating new surface from the window
                }
            },
            AppWindowEvent::OnWindowEvent(event, event_loop) => {
-               if let Some(local_surface) = opt_surface.as_mut() {
+               if let Some(local_device) = opt_device.as_mut() {
                    match event {
                        WindowEvent::CloseRequested => {
                            event_loop.exit();
                        }
                        WindowEvent::SurfaceResized(size) => {
                            // Resized
-                           local_surface.resize((size.width, size.height));
+                           local_device.resize((size.width, size.height));
                        }
                        WindowEvent::RedrawRequested => {
-                           match local_surface.get_default_texture() {
-                               Ok((output, view)) => {
-                                   let device = local_surface.get_device();
+                           match local_device.get_current_texture() {
+                               Ok(output) => {
+                                   let texture_view_descriptor=  wgpu::TextureViewDescriptor::default();
+                                   let view = output.texture.create_view(&texture_view_descriptor);
+                                   let device = local_device.get_device();
                                    let mut encoder = device.create_command_encoder(
                                         &wgpu::CommandEncoderDescriptor {
                                             label: Some("Render Encoder"),
@@ -62,7 +64,7 @@ fn launch() -> Result<(), Box<dyn std::error::Error>> {
                                    );
                                    {
                                     let _render_pass =
-                                       wgpu_quick_start::render_pass_factory::create_render_pass(
+                                       wgpu_quick_start::create_default_render_pass(
                                            &mut encoder,
                                            "root-render-pass".to_owned(),
                                            wgpu::Color {
@@ -75,7 +77,7 @@ fn launch() -> Result<(), Box<dyn std::error::Error>> {
                                        );
                                        // TODO: Render objects using render pass
                                    }
-                                   let queue = local_surface.get_queue();
+                                   let queue = local_device.get_queue();
                                    queue.submit(std::iter::once(encoder.finish()));
                                    output.present();
                                }
